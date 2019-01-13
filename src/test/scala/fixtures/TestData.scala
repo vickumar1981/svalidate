@@ -3,8 +3,11 @@ package fixtures
 import com.github.javafaker.Faker
 import com.github.vickumar1981.svalidate.{Validatable, Validation}
 
+import scala.util.Random
+
 object TestData {
   private final val zipCodeLength = 5
+  private final val phoneNumberLength = 10
   val faker = new Faker()
 
   def validAddress: Address = Address(
@@ -18,7 +21,7 @@ object TestData {
     faker.name.lastName,
     true,
     Some(validAddress),
-    Some(faker.phoneNumber.cellPhone.filter(_.isDigit)))
+    Some(Random.alphanumeric.filter(_.isDigit).take(phoneNumberLength).mkString))
 
   case class Address(street: String,
                      city: String,

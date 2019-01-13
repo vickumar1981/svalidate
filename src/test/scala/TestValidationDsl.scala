@@ -15,13 +15,13 @@ class TestValidationDsl extends FlatSpec with Matchers {
   }
 
   "validate" should "return a success if no validation errors occur" in {
-    val result = validPerson.validate
+    val result = validPerson.validate()
     checkSuccess(result)
   }
 
   "thenThrow" should "return a single validation result error" in {
-    val firstNameRequired = validPerson.copy(firstName = "").validate
-    val lastNameRequired = validPerson.copy(lastName = "").validate
+    val firstNameRequired = validPerson.copy(firstName = "").validate()
+    val lastNameRequired = validPerson.copy(lastName = "").validate()
     firstNameRequired should be(Validation.fail("First name is required"))
     checkFailure(firstNameRequired)
     lastNameRequired should be(Validation.fail("Last name is required"))
@@ -29,7 +29,7 @@ class TestValidationDsl extends FlatSpec with Matchers {
   }
 
   "thenCheck" should "perform validation conditionally" in {
-    val emptyContactInfo = validPerson.copy(address = None, phone = None).validate
+    val emptyContactInfo = validPerson.copy(address = None, phone = None).validate()
     emptyContactInfo should be(
       Validation.fail("Address is required", "Phone # is required"))
     checkFailure(emptyContactInfo)
@@ -37,7 +37,7 @@ class TestValidationDsl extends FlatSpec with Matchers {
     val emptyContactInfoOkay = validPerson.copy(
       address = None,
       phone = None,
-      hasContactInfo = false).validate
+      hasContactInfo = false).validate()
     emptyContactInfoOkay should be(Validation.success)
     checkSuccess(emptyContactInfoOkay)
   }

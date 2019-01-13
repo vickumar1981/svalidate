@@ -2,22 +2,30 @@ package com.github.vickumar1981
 
 package object svalidate {
 
-  case class ValidationResult[T](errors: Seq[T] = Seq.empty) {
-    // scalastyle:off
-    def ++(other: ValidationResult[T]): ValidationResult[T] = ValidationResult(errors ++ other.errors)
-
-    // scalastyle:on
-
+  sealed trait ValidationResult[+T] {
+    def errors: Seq[T]
     def isSuccess: Boolean = errors.isEmpty
     def isFailure: Boolean = !isSuccess
   }
 
+  case class ValidationSuccess[+T]() extends ValidationResult[T] {
+    override val errors: Seq[T] = Seq.empty
+  }
+
+  case class ValidationFailure[+T](errorList: Seq[T]) extends ValidationResult[T] {
+    override val errors: Seq[T] = errorList
+  }
+
+  implicit def validationToSeq[T](v: ValidationResult[T]): Seq[T] = v.errors
+
+  implicit def seqToValidation[T](seq: Seq[T]): ValidationResult[T] =
+    if (seq.isEmpty) ValidationSuccess() else ValidationFailure(seq)
+
   type Validation = ValidationResult[String]
 
   object Validation {
-    //def fail[T](validationError: T): ValidationResult[T] = ValidationResult(validationError :: Nil)
-    def fail[T](validationErrors: T*): ValidationResult[T] = ValidationResult(validationErrors)
-    def success[T]: ValidationResult[T] = ValidationResult()
+    def fail[T](validationErrors: T*): ValidationResult[T] = ValidationFailure[T](validationErrors.toSeq)
+    def success[T]: ValidationResult[T] = ValidationSuccess[T]()
   }
 
   trait ValidatableResult[-A, B] extends ValidationDsl[B] {
