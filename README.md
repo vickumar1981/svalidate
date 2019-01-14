@@ -79,6 +79,8 @@ Using `sValidate`'s validation syntax, we can add a new validator of the type `V
 ```scala
 package test.example
 
+import com.github.vickumar1981.svalidate.{Validatable, Validation}
+
 object ModelValidations {
   implicit object AddressValidator extends Validatable[Address] {
       override def validate(value: Address): Validation = {
@@ -98,7 +100,7 @@ import test.example.Address
 
 object TestValidation {
   import test.example.ModelValidations._
-  import com.github.vickumar1981.ValidationSyntax._
+  import com.github.vickumar1981.svalidate.ValidationSyntax._
   
   def main(args: Array[String]): Unit = {
     val addr = Address("", "", "", "")
@@ -147,6 +149,8 @@ An example validator for `Address` might look like:
 
 ```scala
 package text.example
+
+import com.github.vickumar1981.svalidate.{Validatable, Validation}
 
 object ModelValidations {
   implicit object PersonValidator extends Validatable[Person] {
@@ -206,6 +210,8 @@ An example implementation might look like:
 ```scala
 package text.example
 
+import com.github.vickumar1981.svalidate.{ValidatableWith, Validation}
+
 object ModelValidations {
   implicit object ContactInfoValidator extends ValidatableWith[Contacts, ContactSettings] {
       override def validateWith(value: Contacts, contactSettings: ContactSettings): Validation = {
@@ -220,6 +226,25 @@ object ModelValidations {
                 (contacts orElse { value.twitter errorIfDefined "Twitter contacts must be empty" })
           }
       }
+  }
+}
+```
+
+An example of using `.validateWith`:
+
+```scala
+import test.example.{ContactSettings, ContactInfo}
+
+object TestValidation {
+  import test.example.ModelValidations._
+  import com.github.vickumar1981.svalidate.ValidationSyntax._
+  
+  def main(args: Array[String]): Unit = {
+    val contacts = Contacts(None, None)
+    val contactSettings = ContactSettings(None, None)
+    val result = contact.validateWith(contactSettings)
+    println(result.isSuccess)
+    // true
   }
 }
 ```
