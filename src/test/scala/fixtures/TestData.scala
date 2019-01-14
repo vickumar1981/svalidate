@@ -36,6 +36,18 @@ object TestData {
     Some(mkContactList),
     Some(mkContactList))
 
+  def invalidContactAndSettings: (Contacts, ContactSettings) = {
+    val generateTrueFalse = () => Random.nextInt(maxContacts) % 2
+    val hasContacts = (x: Int) => if (x == 1) Some(true) else Some(false)
+    val hasFacebook = hasContacts(generateTrueFalse())
+    val hasTwitter = hasContacts(generateTrueFalse())
+    val contacts = Contacts(
+      if (hasFacebook.getOrElse(true)) None else Some(mkContactList),
+      if (hasTwitter.getOrElse(true)) None else Some(mkContactList)
+    )
+    (contacts, ContactSettings(hasFacebook, hasTwitter))
+  }
+
   case class Contacts(facebook: Option[List[String]] = None, twitter: Option[List[String]] = None)
   case class ContactSettings(hasFacebookContacts: Option[Boolean] = Some(true),
                              hasTwitterContacts: Option[Boolean] = Some(true))
