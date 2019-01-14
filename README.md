@@ -177,9 +177,9 @@ object ModelValidations {
 ---
 ### 4. Validating With
 
-Sometimes, validation depends on an external value.  This is where we can use the `.validateWith()` syntax.
+Sometimes, validation depends on an external value.  This is where we can use the `.validateWith[T](t: T)` syntax.
 
-Let's say we have a `Contacts` class which contains an optional list of Facebook and Twitter contacts.
+Let's say we have a `Contacts` class which contains an optional list of Facebook and Twitter emails.
 
 Each user in our system also has a `ContactSettings` object, that determines the validation the user's `Contacts`
 
@@ -193,11 +193,11 @@ case class ContactSettings(hasFacebookContacts: Option[Boolean] = Some(true),
 
 The rules for validating a user's `Contacts` are:
  -  If the `hasFacebookContacts` or `hasTwitterContacts` indicators are set to `true`,
-    then the respective `facebook` or `twitter` list of `Contacts` for a user must be supplied
+    then the respective `facebook` or `twitter` list of emails for a user must be supplied
  -  If the `hasFacebookContacts` or `hasTwitterContacts` indicators are set to `false`,
-    then the respective `facebook` or `twitter` list of `Contacts` for a user must be empty
+    then the respective `facebook` or `twitter` list of emails for a user must be empty
  -  If the `hasFacebookContacts` or `hasTwitterContacts` indicators are empty,
-    then the respective `facebook` or `twitter` list of `Contacts` can be empty or supplied
+    then the respective `facebook` or `twitter` list of emails can be empty or supplied
 
 We will use a `ValidatableWith[Contacts, ContactSettings]` validator. 
 
