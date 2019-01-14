@@ -61,17 +61,13 @@ class TestValidationDsl extends FlatSpec with Matchers {
   }
 
   "validateWith" should "accept a generic type parameter" in {
-    val emptyFirstName = validContactInfo.copy(firstName = "")
-    val emptyLastName = validContactInfo.copy(lastName = "")
-
-    val emptyFirstNameSuccess = emptyFirstName.validateWith(false)
-    val emptyFirstNameFailure = emptyFirstName.validateWith(true)
-    checkSuccess(emptyFirstNameSuccess)
-    checkFailure(emptyFirstNameFailure)
-
-    val emptyLastNameSuccess = emptyLastName.validateWith(false)
-    val emptyLastNameFailure = emptyLastName.validateWith(true)
-    checkSuccess(emptyLastNameSuccess)
-    checkFailure(emptyLastNameFailure)
+    val contactInfo = validContactInfo.validateWith(ContactSettings())
+    checkSuccess(contactInfo)
+    val invalidFacebookContacts = validContactInfo.copy(facebook = None).validateWith(ContactSettings())
+    invalidFacebookContacts should be(Validation.fail("Facebook contacts are required"))
+    checkFailure(invalidFacebookContacts)
+    val invalidTwitterContacts = validContactInfo.copy(twitter = None).validateWith(ContactSettings())
+    invalidTwitterContacts should be(Validation.fail("Twitter contacts are required"))
+    checkFailure(invalidTwitterContacts)
   }
 }

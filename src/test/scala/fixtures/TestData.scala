@@ -8,6 +8,7 @@ import scala.util.Random
 object TestData {
   private final val zipCodeLength = 5
   private final val phoneNumberLength = 10
+  private final val maxContacts = 10
   val faker = new Faker()
 
   case class BlankObject()
@@ -28,18 +29,30 @@ object TestData {
     Some(validAddress),
     Some(Random.alphanumeric.filter(_.isDigit).take(phoneNumberLength).mkString))
 
-  def validContactInfo: ContactInfo = ContactInfo(
-    faker.name.firstName,
-    faker.name.lastName)
+  def mkContactList: List[String] = (1 to Random.nextInt(maxContacts))
+    .toList.map { _ => faker.internet().emailAddress() }
 
-  case class ContactInfo(firstName: String, lastName: String)
+  def validContactInfo: Contacts = Contacts(
+    Some(mkContactList),
+    Some(mkContactList))
 
-  implicit object ContactInfoValidator extends ValidatableWith[ContactInfo, Boolean] {
-    override def validateWith(value: ContactInfo, isRequired: Boolean): Validation =
-      if (isRequired) {
-        (value.firstName.nonEmpty orElse "First name is required") ++
-          (value.lastName.nonEmpty orElse "Last name is required")
-      } else { Validation.success }
+  case class Contacts(facebook: Option[List[String]] = None, twitter: Option[List[String]] = None)
+  case class ContactSettings(hasFacebookContacts: Option[Boolean] = Some(true),
+                             hasTwitterContacts: Option[Boolean] = Some(true))
+
+  implicit object ContactInfoValidator extends ValidatableWith[Contacts, ContactSettings] {
+    override def validateWith(value: Contacts, contactSettings: ContactSettings): Validation = {
+      contactSettings.hasFacebookContacts.maybeValidate {
+        contacts =>
+          (contacts andThen { value.facebook errorIfEmpty "Facebook contacts are required" }) ++
+          (contacts orElse { value.facebook errorIfDefined "Facebook contacts must be empty"})
+      } ++
+      contactSettings.hasTwitterContacts.maybeValidate {
+        contacts =>
+          (contacts andThen { value.twitter errorIfEmpty "Twitter contacts are required" }) ++
+          (contacts orElse { value.twitter errorIfDefined "Twitter contacts must be empty" })
+      }
+    }
   }
 
   case class Address(street: String,
@@ -62,10 +75,14 @@ object TestData {
 
   implicit object PersonValidator extends Validatable[Person] {
     def validateContactInfo(value: Person): Validation = {
-      (value.address.isDefined orElse "Address is required") ++
-        (value.phone.isDefined orElse "Phone # is required") ++
+      (value.address errorIfEmpty "Address is required") ++
+        (value.phone errorIfEmpty "Phone # is required") ++
         value.address.maybeValidate() ++
-        value.phone.maybeValidate(_.matches("\\d{10}") orElse "Phone # must be 10 digits")
+        value.phone.maybeValidate(_.matches("\\d{10}") orElse "Phone # must be 10 digits") ++
+        value.hasContactInfo.orElse {
+          (value.address errorIfDefined "Address must be empty") ++
+            (value.phone errorIfDefined "Phone # must be empty")
+        }
     }
 
     override def validate(value: Person): Validation = {
