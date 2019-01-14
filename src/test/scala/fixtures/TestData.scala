@@ -78,17 +78,17 @@ object TestData {
       (value.address errorIfEmpty "Address is required") ++
         (value.phone errorIfEmpty "Phone # is required") ++
         value.address.maybeValidate() ++
-        value.phone.maybeValidate(_.matches("\\d{10}") orElse "Phone # must be 10 digits") ++
-        value.hasContactInfo.orElse {
-          (value.address errorIfDefined "Address must be empty") ++
-            (value.phone errorIfDefined "Phone # must be empty")
-        }
+        value.phone.maybeValidate(_.matches("\\d{10}") orElse "Phone # must be 10 digits")
     }
 
     override def validate(value: Person): Validation = {
       (value.firstName.nonEmpty orElse "First name is required") ++
         (value.lastName.nonEmpty orElse "Last name is required") ++
-        (value.hasContactInfo andThen validateContactInfo(value))
+        (value.hasContactInfo andThen validateContactInfo(value)) ++
+        value.hasContactInfo.orElse {
+          (value.address errorIfDefined "Address must be empty") ++
+            (value.phone errorIfDefined "Phone # must be empty")
+        }
     }
   }
 }
