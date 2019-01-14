@@ -145,7 +145,7 @@ The rules for validating a `Person` are:
  -  if the `hasContactInfo` flag is false, then both `phone` and `address`
     should be empty
 
-An example validator for `Address` might look like: 
+An example validator for `Person` might look like: 
 
 ```scala
 package text.example
