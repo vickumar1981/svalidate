@@ -5,10 +5,10 @@ trait ValidationDsl[T] {
     if (errors.isEmpty) Validation.success else ValidationFailure(errors)
 
   implicit class BoolsToValidation(cond: Boolean) {
-    def thenThrow(errors: T*): ValidationResult[T] =
-      if (cond) collapseErrors(errors.toSeq) else Validation.success
+    def orElse(errors: T*): ValidationResult[T] =
+      if (!cond) collapseErrors(errors.toSeq) else Validation.success
 
-    def thenCheck(validation: => ValidationResult[T]): ValidationResult[T] =
+    def andThen(validation: => ValidationResult[T]): ValidationResult[T] =
       if (cond) validation else Validation.success
   }
 
@@ -19,7 +19,7 @@ trait ValidationDsl[T] {
     def maybeValidate(validation: A => ValidationResult[T]): ValidationResult[T] =
       validatable.map(validation).getOrElse(Validation.success)
 
-    def maybeThrow(errors: T*): ValidationResult[T] =
+    def maybeValidate(errors: T*): ValidationResult[T] =
       validatable.map(_ => collapseErrors(errors.toSeq)).getOrElse(Validation.success)
   }
 

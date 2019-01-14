@@ -37,8 +37,8 @@ object TestData {
   implicit object ContactInfoValidator extends ValidatableWith[ContactInfo, Boolean] {
     override def validateWith(value: ContactInfo, isRequired: Boolean): Validation =
       if (isRequired) {
-        (value.firstName.isEmpty thenThrow "First name is required") ++
-          (value.lastName.isEmpty thenThrow "Last name is required")
+        (value.firstName.nonEmpty orElse "First name is required") ++
+          (value.lastName.nonEmpty orElse "Last name is required")
       } else { Validation.success }
   }
 
@@ -55,23 +55,23 @@ object TestData {
 
   implicit object AddressValidator extends Validatable[Address] {
     override def validate(value: Address): Validation = {
-      (!value.zipCode.matches("\\d{5}") thenThrow "Zip code must be 5 digits") ++
-        (!value.state.matches("[A-Z]{2}") thenThrow "State abbr must be 2 letters")
+      (value.zipCode.matches("\\d{5}") orElse "Zip code must be 5 digits") ++
+        (value.state.matches("[A-Z]{2}") orElse "State abbr must be 2 letters")
     }
   }
 
   implicit object PersonValidator extends Validatable[Person] {
     def validateContactInfo(value: Person): Validation = {
-      (value.address.isEmpty thenThrow "Address is required") ++
-        (value.phone.isEmpty thenThrow "Phone # is required") ++
+      (value.address.isDefined orElse "Address is required") ++
+        (value.phone.isDefined orElse "Phone # is required") ++
         value.address.maybeValidate() ++
-        value.phone.maybeValidate(p => (!p.matches("\\d{10}")) thenThrow "Phone # must be 10 digits")
+        value.phone.maybeValidate(_.matches("\\d{10}") orElse "Phone # must be 10 digits")
     }
 
     override def validate(value: Person): Validation = {
-      (value.firstName.isEmpty thenThrow "First name is required") ++
-        (value.lastName.isEmpty thenThrow "Last name is required") ++
-        (value.hasContactInfo thenCheck validateContactInfo(value))
+      (value.firstName.nonEmpty orElse "First name is required") ++
+        (value.lastName.nonEmpty orElse "Last name is required") ++
+        (value.hasContactInfo andThen validateContactInfo(value))
     }
   }
 }
