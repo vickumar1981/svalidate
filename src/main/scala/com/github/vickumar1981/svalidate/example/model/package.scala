@@ -1,18 +1,29 @@
 package com.github.vickumar1981.svalidate.example
 
+import java.util.Optional
+
 import com.github.vickumar1981.svalidate.{Validatable, ValidatableWith, Validation}
+import com.github.vickumar1981.svalidate.util.example.model.{Address => JavaAddress, Person => JavaPerson}
 
 package object model {
+  private def toJavaOption[T](option: Option[T]): Optional[T] =
+    if (option.isDefined) Optional.of(option.get) else Optional.empty()
+
   case class Address(street: String,
                      city: String,
                      state: String,
-                     zipCode: String)
+                     zipCode: String) {
+    def asJava: JavaAddress = new JavaAddress(street, city, state, zipCode)
+  }
 
   case class Person(firstName: String,
                     lastName: String,
                     hasContactInfo: Boolean,
                     address: Option[Address] = None,
-                    phone: Option[String] = None)
+                    phone: Option[String] = None) {
+    def asJava: JavaPerson = new JavaPerson(firstName, lastName, hasContactInfo,
+      toJavaOption(address.map { _.asJava }), toJavaOption(phone))
+  }
 
   implicit object AddressValidator extends Validatable[Address] {
     override def validate(value: Address): Validation = {

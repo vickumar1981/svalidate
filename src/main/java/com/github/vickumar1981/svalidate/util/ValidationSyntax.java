@@ -17,7 +17,7 @@ public class ValidationSyntax {
     }
 
     public static <A> Function<Optional<?>, Validation<A>> errorIfEmpty(A ...errors) {
-        return (validatable) -> validatable.map(v -> Validation.success()).orElse(Validation.fail(errors));
+        return (validatable) -> validatable.map(v -> Validation.<A>success()).orElse(Validation.fail(errors));
     }
 
     public static <A> Function<Optional<?>, Validation<A>> errorIfDefined(A ...errors) {
@@ -25,7 +25,7 @@ public class ValidationSyntax {
     }
 
     public static <A> Validation<A> maybeValidate(Optional<? extends Validatable> condition) {
-        return condition.map(c -> c.validate()).orElse(Validation.success());
+        return condition.map(c -> c.validate()).orElse(Validation.<A>success());
     }
 
     public static <A, B> Validation<A> maybeValidate(Optional<B> condition, Function<B, Validation<A>> check) {

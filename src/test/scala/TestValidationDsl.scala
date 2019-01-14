@@ -6,6 +6,7 @@ class TestValidationDsl extends FlatSpec with Matchers {
   import TestFixtures._
   import com.github.vickumar1981.svalidate.example.model._
   import com.github.vickumar1981.svalidate.ValidationSyntax._
+  import scala.collection.JavaConverters._
 
   private def checkFailure(v: Validation) = {
     v.isFailure should be(true)
@@ -137,5 +138,30 @@ class TestValidationDsl extends FlatSpec with Matchers {
     val result = validationDsl.testErrorIfDefined(Some(""), "value should be empty")
     result should be(Validation.fail("value should be empty"))
     checkFailure(result)
+  }
+
+  "java static functions" should "return the same validation results as the Scala DSL" in {
+    val emptyAddress = Address("", "", "", "")
+    val emptyAddressErrors = emptyAddress.asJava.validate()
+    emptyAddressErrors.isFailure should be(true)
+    emptyAddressErrors.isSuccess should be(false)
+    emptyAddress.validate().errors.asJava should be(emptyAddressErrors.errors())
+
+    val validPersonInfo = validPerson.asJava.validate()
+    validPersonInfo.isFailure should be(false)
+    validPersonInfo.isSuccess should be(true)
+
+    val emptyPersonInfo = validPerson.copy(address = None, phone = None)
+    val emptyPersonInfoErrors = emptyPersonInfo.asJava.validate()
+    emptyPersonInfoErrors.isFailure should be(true)
+    emptyPersonInfoErrors.isSuccess should be(false)
+    emptyPersonInfo.validate().errors.asJava should be(emptyPersonInfoErrors.errors())
+
+    val emptyPersonInfoOkay = validPerson.copy(address = None,
+      phone = None,
+      hasContactInfo = false)
+    val emptyPersonInfoOkayErrors = emptyPersonInfoOkay.asJava.validate()
+    emptyPersonInfoOkayErrors.isSuccess should be(true)
+    emptyPersonInfoOkayErrors.isFailure should be(false)
   }
 }

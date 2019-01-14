@@ -1,16 +1,15 @@
 package com.github.vickumar1981.svalidate.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;;
 
 public class Validation<T> {
 
-    private List<T> exceptions;
+    private ArrayList<T> exceptions;
 
-    private Validation(List<T> errors) {
+    private Validation(ArrayList<T> errors) {
         this.exceptions = errors;
     }
 
@@ -25,14 +24,16 @@ public class Validation<T> {
 
     public Validation<T> andThen(Boolean cond, Supplier<Validation<T>> other) {
         if (cond) {
-            this.exceptions.addAll(other.get().errors());
+            Validation <T> otherValidation = other.get();
+            this.exceptions.addAll(otherValidation.errors());
         }
         return this;
     }
 
     public Validation<T> orElse(Boolean cond, Supplier<Validation<T>> other) {
         if (!cond) {
-            this.exceptions.addAll(other.get().errors());
+            Validation <T> otherValidation = other.get();
+            this.exceptions.addAll(otherValidation.errors());
         }
         return this;
     }
@@ -45,13 +46,12 @@ public class Validation<T> {
         return !isSuccess();
     }
 
-    public static <A> Validation fail(A ...value) {
-        return new Validation<>(
-                Arrays.stream(value).collect(Collectors.toList())
-        );
+    public static <A> Validation<A> fail(A ...value) {
+        ArrayList<A> errors = new ArrayList<>(Arrays.asList(value));
+        return new Validation<>(errors);
     }
 
-    public static <A> Validation success() {
-        return new Validation<>(Collections.emptyList());
+    public static <A> Validation<A> success() {
+        return new Validation<>(new ArrayList<>());
     }
 }

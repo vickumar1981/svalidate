@@ -12,18 +12,28 @@ import static com.github.vickumar1981.svalidate.util.ValidationSyntax.maybeValid
 public class Person implements Validatable<String> {
     private String firstName;
     private String lastName;
-    private boolean hasContactInfo;
+    private Boolean hasContactInfo;
     private Optional<Address> address;
     private Optional<String> phone;
+
+    public Person(String firstName,
+                  String lastName,
+                  Boolean hasContactInfo,
+                  Optional<Address> address,
+                  Optional<String> phone) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.hasContactInfo = hasContactInfo;
+        this.address = address;
+        this.phone = phone;
+    }
 
     private Validation<String> validateContactInfo() {
         return errorIfEmpty("Address is required").apply(address)
                 .append(errorIfEmpty("Phone # is required").apply(phone))
                 .append(maybeValidate(address))
-                .append(maybeValidate(phone, p ->
-                    orElse("Phone # must be 10 digits")
-                            .apply(p != null && p.matches("\\d{10}"))
-                ));
+                .append(maybeValidate(phone.map(p -> p.matches("\\d{10}")),
+                        orElse("Phone # must be 10 digits")));
     }
 
     @Override
