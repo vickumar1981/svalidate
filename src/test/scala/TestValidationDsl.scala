@@ -1,8 +1,10 @@
+
 import com.github.vickumar1981.svalidate.{Validation, ValidationDsl, ValidationFailure, ValidationSuccess}
 import org.scalatest.{FlatSpec, Matchers}
 
 class TestValidationDsl extends FlatSpec with Matchers {
-  import fixtures.TestData._
+  import TestFixtures._
+  import com.github.vickumar1981.svalidate.example.model._
   import com.github.vickumar1981.svalidate.ValidationSyntax._
 
   private def checkFailure(v: Validation) = {
@@ -44,7 +46,7 @@ class TestValidationDsl extends FlatSpec with Matchers {
     checkSuccess(result)
   }
 
-  "thenThrow" should "return a single validation result error" in {
+  "orElse" should "return a single validation result error" in {
     val firstNameRequired = validPerson.copy(firstName = "").validate()
     val lastNameRequired = validPerson.copy(lastName = "").validate()
     firstNameRequired should be(Validation.fail("First name is required"))
@@ -53,7 +55,7 @@ class TestValidationDsl extends FlatSpec with Matchers {
     checkFailure(lastNameRequired)
   }
 
-  "thenCheck" should "perform validation conditionally" in {
+  "andThen" should "perform validation conditionally" in {
     val emptyPersonInfo = validPerson.copy(address = None, phone = None).validate()
     emptyPersonInfo should be(
       Validation.fail("Address is required", "Phone # is required"))
@@ -76,6 +78,28 @@ class TestValidationDsl extends FlatSpec with Matchers {
     val invalidTwitterContacts = validContactInfo.copy(twitter = None).validateWith(ContactSettings())
     invalidTwitterContacts should be(Validation.fail("Twitter contacts are required"))
     checkFailure(invalidTwitterContacts)
+  }
+
+  "maybeValidate" should "return complementary values for when option is present and when option is empty" in {
+    val invalidFacebookContacts = validContactInfo.copy(facebook = None).validateWith(ContactSettings())
+    invalidFacebookContacts should be(Validation.fail("Facebook contacts are required"))
+    checkFailure(invalidFacebookContacts)
+
+    val invalidFacebookContacts2 =
+      validContactInfo.copy(facebook = Some(mkContactList))
+        .validateWith(ContactSettings(hasFacebookContacts = Some(false)))
+    invalidFacebookContacts2 should be(Validation.fail("Facebook contacts must be empty"))
+    checkFailure(invalidFacebookContacts2)
+
+    val invalidTwitterContacts = validContactInfo.copy(twitter = None).validateWith(ContactSettings())
+    invalidTwitterContacts should be(Validation.fail("Twitter contacts are required"))
+    checkFailure(invalidTwitterContacts)
+
+    val invalidTwitterContacts2 =
+      validContactInfo.copy(twitter = Some(mkContactList))
+        .validateWith(ContactSettings(hasTwitterContacts = Some(false)))
+    invalidTwitterContacts2 should be(Validation.fail("Twitter contacts must be empty"))
+    checkFailure(invalidTwitterContacts2)
   }
 
   "maybeValidateWith" should "return a success for an empty option" in {

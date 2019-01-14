@@ -42,6 +42,6 @@ coverageExcludedPackages := "<empty>"
 
 coverageEnabled in(Test, compile) := true
 coverageEnabled in(Compile, compile) := false
-coverageMinimum := 0
-coverageFailOnMinimum := false
+coverageMinimum := 100
+coverageFailOnMinimum := true
 scalastyleFailOnWarning := true
