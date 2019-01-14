@@ -23,9 +23,16 @@ public class Validation<T> {
         return this;
     }
 
-    public Validation<T> andThen(Supplier<Validation<T>> other) {
-        if (isSuccess()) {
-            return other.get();
+    public Validation<T> andThen(Boolean cond, Supplier<Validation<T>> other) {
+        if (cond) {
+            this.exceptions.addAll(other.get().errors());
+        }
+        return this;
+    }
+
+    public Validation<T> orElse(Boolean cond, Supplier<Validation<T>> other) {
+        if (!cond) {
+            this.exceptions.addAll(other.get().errors());
         }
         return this;
     }
