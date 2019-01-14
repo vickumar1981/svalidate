@@ -1,7 +1,7 @@
 package fixtures
 
 import com.github.javafaker.Faker
-import com.github.vickumar1981.svalidate.{Validatable, Validation}
+import com.github.vickumar1981.svalidate.{Validatable, ValidatableWith, Validation}
 
 import scala.util.Random
 
@@ -9,6 +9,11 @@ object TestData {
   private final val zipCodeLength = 5
   private final val phoneNumberLength = 10
   val faker = new Faker()
+
+  case class BlankObject()
+
+  implicit object BlankObjectValidator extends Validatable[BlankObject]
+  implicit object BlankObjectValidatorWith extends ValidatableWith[BlankObject, String]
 
   def validAddress: Address = Address(
     faker.address.streetAddress,
@@ -22,6 +27,20 @@ object TestData {
     true,
     Some(validAddress),
     Some(Random.alphanumeric.filter(_.isDigit).take(phoneNumberLength).mkString))
+
+  def validContactInfo: ContactInfo = ContactInfo(
+    faker.name.firstName,
+    faker.name.lastName)
+
+  case class ContactInfo(firstName: String, lastName: String)
+
+  implicit object ContactInfoValidator extends ValidatableWith[ContactInfo, Boolean] {
+    override def validateWith(value: ContactInfo, isRequired: Boolean): Validation =
+      if (isRequired) {
+        (value.firstName.isEmpty thenThrow "First name is required") ++
+          (value.lastName.isEmpty thenThrow "Last name is required")
+      } else { Validation.success }
+  }
 
   case class Address(street: String,
                      city: String,

@@ -1,4 +1,4 @@
-import com.github.vickumar1981.svalidate.Validation
+import com.github.vickumar1981.svalidate.{Validation, ValidationSuccess, ValidationFailure}
 import org.scalatest.{FlatSpec, Matchers}
 
 class TestValidationDsl extends FlatSpec with Matchers {
@@ -7,11 +7,29 @@ class TestValidationDsl extends FlatSpec with Matchers {
 
   private def checkFailure(v: Validation) = {
     v.isFailure should be(true)
+    v match {
+      case ValidationSuccess() => fail("ValidationSuccess was not equal to ValidationFailure")
+      case ValidationFailure(_) => succeed
+    }
   }
 
   private def checkSuccess(v: Validation) = {
     v should be(Validation.success)
     v.isSuccess should be(true)
+    v match {
+      case ValidationSuccess() => succeed
+      case ValidationFailure(_) => fail("ValidationFailure was not equal to ValidationSuccess")
+    }
+  }
+
+  "validate" should "return a ValidationSuccess if no implementation is defined" in {
+    val result = BlankObject().validate()
+    checkSuccess(result)
+  }
+
+  "validateWith" should "return a ValidationSuccess if no implementation is defined" in {
+    val result = BlankObject().validateWith("")
+    checkSuccess(result)
   }
 
   "validate" should "return a success if no validation errors occur" in {
@@ -29,16 +47,31 @@ class TestValidationDsl extends FlatSpec with Matchers {
   }
 
   "thenCheck" should "perform validation conditionally" in {
-    val emptyContactInfo = validPerson.copy(address = None, phone = None).validate()
-    emptyContactInfo should be(
+    val emptyPersonInfo = validPerson.copy(address = None, phone = None).validate()
+    emptyPersonInfo should be(
       Validation.fail("Address is required", "Phone # is required"))
-    checkFailure(emptyContactInfo)
+    checkFailure(emptyPersonInfo)
 
-    val emptyContactInfoOkay = validPerson.copy(
+    val emptyPersonInfoOkay = validPerson.copy(
       address = None,
       phone = None,
       hasContactInfo = false).validate()
-    emptyContactInfoOkay should be(Validation.success)
-    checkSuccess(emptyContactInfoOkay)
+    emptyPersonInfoOkay should be(Validation.success)
+    checkSuccess(emptyPersonInfoOkay)
+  }
+
+  "validateWith" should "accept a generic type parameter" in {
+    val emptyFirstName = validContactInfo.copy(firstName = "")
+    val emptyLastName = validContactInfo.copy(lastName = "")
+
+    val emptyFirstNameSuccess = emptyFirstName.validateWith(false)
+    val emptyFirstNameFailure = emptyFirstName.validateWith(true)
+    checkSuccess(emptyFirstNameSuccess)
+    checkFailure(emptyFirstNameFailure)
+
+    val emptyLastNameSuccess = emptyLastName.validateWith(false)
+    val emptyLastNameFailure = emptyLastName.validateWith(true)
+    checkSuccess(emptyLastNameSuccess)
+    checkFailure(emptyLastNameFailure)
   }
 }
