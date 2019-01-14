@@ -13,13 +13,13 @@ Requires: Scala 2.12, 2.11
 ---
 ### Contents
 
-1.  [Add it to your project](https://github.com/vickumar1981/svalidate/#add-it-to-your-project-)
-2.  [Basic Usage](https://github.com/vickumar1981/svalidate#basic-usage)
-2.  [Nested Classes](https://github.com/vickumar1981/svalidate#nested-classes)
-3.  [Validating With](https://github.com/vickumar1981/svalidate#validating-with)
-5.  [Reporting an Issue](https://github.com/vickumar1981/svalidate#reporting-an-issue)
-6.  [Contributing](https://github.com/vickumar1981/svalidate#contributing)
-7.  [License](https://github.com/vickumar1981/svalidate#license)
+1.  [Add it to your project](https://github.com/vickumar1981/svalidate#1-add-it-to-your-project-)
+2.  [Basic Usage](https://github.com/vickumar1981/svalidate#2-basic-usage)
+3.  [Nested Classes](https://github.com/vickumar1981/svalidate#3-nested-classes)
+4.  [Validating With](https://github.com/vickumar1981/svalidate#4-validating-with)
+5.  [Reporting an Issue](https://github.com/vickumar1981/svalidate#5-reporting-an-issue)
+6.  [Contributing](https://github.com/vickumar1981/svalidate#6-contributing)
+7.  [License](https://github.com/vickumar1981/svalidate#7-license)
 
 ---
 ### 1. Add it to your project ...
