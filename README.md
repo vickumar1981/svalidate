@@ -185,7 +185,7 @@ Sometimes, validation depends on an external value.  This is where we can use th
 
 Let's say we have a `Contacts` class which contains an optional list of Facebook and Twitter emails.
 
-Each user in our system also has a `ContactSettings` object, that determines the validation the user's `Contacts`
+Each user in our system also has a `ContactSettings` object, that determines the validation of the user's `Contacts`
 
 The two classes might look like:
 
