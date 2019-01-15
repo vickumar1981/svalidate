@@ -20,28 +20,27 @@ package com.github.vickumar1981
   * | [[com.github.vickumar1981.svalidate.ValidationSyntax]] | Provides DSL syntax for validations |
   * | [[com.github.vickumar1981.svalidate.ValidatableResult]] | Interface to implement for defining a validation |
   *
-  *
   */
 package object svalidate {
-
   /**
     * A generic interface that holds a validation result of type T, interoperable with Seq[T]
+    * @tparam T the type of ValidationResult
     */
   sealed trait ValidationResult[+T] {
     /**
-      * the list of errors from the validation
+      * List of errors from the validation
       * @return the list of errors from the validation result
       */
     def errors: Seq[T]
 
     /**
-      * check if the validation succeeded
+      * Check if the validation succeeded
       * @return if the validation succeded
       */
     def isSuccess: Boolean = errors.isEmpty
 
     /**
-      * check if the validation failed
+      * Check if the validation failed
       * @return if the validation failed
       */
     def isFailure: Boolean = !isSuccess
@@ -49,7 +48,8 @@ package object svalidate {
 
   /**
     * A case class that represents a validation success of type T.
-    * Extends a [[ValidationResult]] and implements it with an empty list
+    * Extends a [[ValidationResult]][T] and implements the errors function with an empty list
+    * @tparam T the type of ValidationResult
     */
   case class ValidationSuccess[+T]() extends ValidationResult[T] {
     /**
@@ -60,19 +60,28 @@ package object svalidate {
 
   /**
     * A case class that represents a validation failure of type T
-    * Extends a [[ValidationResult]] and implements it with the list of errors passed in
+    * Extends a [[ValidationResult]][T] and implements errors with the list of errors passed in
+    * @tparam T the type of [[ValidationResult]]
     */
   case class ValidationFailure[+T](errorList: Seq[T]) extends ValidationResult[T] {
     override val errors: Seq[T] = errorList
   }
 
   /**
-    * Implicit conversion from [[ValidationResult]] to Seq[T]
+    * Implicit conversion from [[ValidationResult]][T] to Seq[T].
+    * Allows [[ValidationResult]][T] to be substituted for Seq[T]
+    * @param v the input [[ValidationResult]][T]
+    * @tparam T the type of [[ValidatableResult]]
+    * @return a Seq[T] returned the errors of the input validation
     */
   implicit def validationToSeq[T](v: ValidationResult[T]): Seq[T] = v.errors
 
   /**
-    * Implicit conversion from Seq[T] to [[ValidationResult]]
+    * Implicit conversion from Seq[T] to [[ValidationResult]][T].
+    * Allows Seq[T] to be substituted for [[ValidationResult]][T]
+    * @param seq the input Seq
+    * @tparam T the type of [[ValidationResult]]
+    * @return a [[ValidationFailure]] containing errors from the input Seq
     */
   implicit def seqToValidation[T](seq: Seq[T]): ValidationResult[T] =
     if (seq.isEmpty) ValidationSuccess() else ValidationFailure(seq)
@@ -83,16 +92,59 @@ package object svalidate {
     */
   type Validation = ValidationResult[String]
 
+  /**
+    * Companion object containing factory methods to create a [[ValidationSuccess]][T] or
+    * a [[ValidationFailure]][T]
+    *
+    * {{{
+    *   val validationSuccess = Validation.success
+    *   val validationFailure = Validation.fail("The validation failed.")
+    * }}}
+    */
   object Validation {
+    /**
+      * Creates a validation failure from a list of T
+      * @param validationErrors a list of type T
+      * @tparam T the type of [[ValidationFailure]] to create
+      * @return a [[ValidationFailure]][T] containing the list of errors
+      */
     def fail[T](validationErrors: T*): ValidationResult[T] = ValidationFailure[T](validationErrors.toSeq)
+
+    /**
+      * Creates a validation success of type T
+      * @tparam T the type of success to create
+      * @return a [[ValidationSuccess]][T]
+      */
     def success[T]: ValidationResult[T] = ValidationSuccess[T]()
   }
 
+  /**
+    * A generic type class that defines which class to validate and what type of validation to return
+    * @tparam A the class to validate
+    * @tparam B the type of [[ValidationResult]] to use with [[ValidationDsl]]
+    */
   trait ValidatableResult[-A, B] extends ValidationDsl[B] {
+    /**
+      * Override this class to validate type A using a [[ValidationResult]][B]
+      * @param value
+      * @return
+      */
     def validate(value: A): ValidationResult[B] = Validation.success
   }
 
+  /**
+    * A generic type class that defines which class to use validateWith and what type of validation to return
+    * @tparam A the class to validate
+    * @tparam B the class to pass into validateWith
+    * @tparam C the type of [[ValidationResult]] to use with [[ValidationDsl]]
+    */
   trait ValidatableWithResult[-A, B, C] extends ValidationDsl[C] {
+    /**
+      *
+      * @param value
+      * @param b
+      * @return
+      */
     def validateWith(value: A, b: B): ValidationResult[C] = Validation.success
   }
 
