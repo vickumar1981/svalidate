@@ -157,8 +157,8 @@ package object svalidate {
     }
 
     implicit class ValidatableWithOps[+A, B, C](value: A)(
-      implicit v: ValidatableWith[A, B]) {
-      def validateWith(b: B): Validation = v.validateWith(value, b)
+      implicit v: ValidatableWithResult[A, B, C]) {
+      def validateWith(b: B): ValidationResult[C] = v.validateWith(value, b)
     }
   }
 }
