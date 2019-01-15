@@ -1,6 +1,6 @@
 ![Logo](logo.png)
 
-# Conributing to StringDistance  
+# Conributing to sValidate
 
 Thanks for taking the time to contribute!
 
