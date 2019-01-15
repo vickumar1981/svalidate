@@ -6,7 +6,7 @@
 
 A simple and easy validation syntax for Scala and Java classes
 
-For more detailed information, please refer to the [API Documentation](https://vickumar1981.github.io/stringdistance/api/com/github/vickumar1981/svalidate/index.html "API Documentation").
+For more detailed information, please refer to the [API Documentation](https://vickumar1981.github.io/svalidate/api/com/github/vickumar1981/svalidate/index.html "API Documentation").
 
 Requires: Scala 2.12, 2.11
 
