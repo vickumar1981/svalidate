@@ -2,7 +2,7 @@
 
 ## sValidate
 
-[![Build Status](https://api.travis-ci.org/vickumar1981/svalidate.svg?branch=master)](https://travis-ci.org/vickumar1981/svalidate/builds) [![Coverage Status](https://coveralls.io/repos/github/vickumar1981/svalidate/badge.svg?branch=master)](https://coveralls.io/github/vickumar1981/svalidate?branch=master) [![Read the Docs](https://img.shields.io/readthedocs/pip.svg)](https://vickumar1981.github.io/stringdistance/api/com/github/vickumar1981/svalidate/index.html) [![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/github/vickumar1981/svalidate_2.12/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/com.github.vickumar1981/stringdistance) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
+[![Build Status](https://api.travis-ci.org/vickumar1981/svalidate.svg?branch=master)](https://travis-ci.org/vickumar1981/svalidate/builds) [![Coverage Status](https://coveralls.io/repos/github/vickumar1981/svalidate/badge.svg?branch=master)](https://coveralls.io/github/vickumar1981/svalidate?branch=master) [![Read the Docs](https://img.shields.io/readthedocs/pip.svg)](https://vickumar1981.github.io/svalidate/api/com/github/vickumar1981/svalidate/index.html) [![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/github/vickumar1981/svalidate_2.12/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/com.github.vickumar1981/svalidate) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 A simple and easy validation syntax for Scala and Java classes
 
@@ -28,7 +28,7 @@ __Using sbt:__
 
 In `build.sbt`:
 ```scala
-libraryDependencies += "com.github.vickumar1981" %% "svalidate" % "1.0.0-SNAPSHOT"
+libraryDependencies += "com.github.vickumar1981" %% "svalidate" % "1.0.0"
 ```
 
 __Using gradle:__
@@ -36,7 +36,7 @@ __Using gradle:__
 In `build.gradle`:
 ```groovy
 dependencies {
-    compile 'com.github.vickumar1981:stringdistance_2.12:1.0.0-SNAPSHOT'
+    compile 'com.github.vickumar1981:svalidate_2.12:1.0.0'
 }
 ```
 
@@ -47,7 +47,7 @@ In `pom.xml`:
 <dependency>
     <groupId>com.github.vickumar1981</groupId>
     <artifactId>svalidate_2.12</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 

@@ -1,7 +1,7 @@
 import xerial.sbt.Sonatype._
 
 name := "svalidate"
-version := "1.0.0-SNAPSHOT"
+version := "1.0.0"
 scalaVersion := "2.12.7"
 organization := "com.github.vickumar1981"
 description := "Simple and easy validations for Scala and Java"
