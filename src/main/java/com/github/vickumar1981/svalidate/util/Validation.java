@@ -25,7 +25,7 @@ public class Validation<T> {
     public Validation<T> andThen(Boolean cond, Supplier<Validation<T>> other) {
         if (cond) {
             Validation <T> otherValidation = other.get();
-            this.exceptions.addAll(otherValidation.errors());
+            append(otherValidation);
         }
         return this;
     }
@@ -33,7 +33,7 @@ public class Validation<T> {
     public Validation<T> orElse(Boolean cond, Supplier<Validation<T>> other) {
         if (!cond) {
             Validation <T> otherValidation = other.get();
-            this.exceptions.addAll(otherValidation.errors());
+            append(otherValidation);
         }
         return this;
     }
