@@ -12,8 +12,8 @@ package com.github.vickumar1981
   *  A validator for a class is defined by implicitly
   *  implementing a [[com.github.vickumar1981.svalidate.ValidatableResult]]
   *
-  *  Importing [[com.github.vickumar1981.svalidate.util.ValidationSyntax]]._ will add '.validate'
-  *  and '.validateWith' methods to a class if a validator for that class is implicitly defined.
+  *  Importing [[com.github.vickumar1981.svalidate.util.ValidationSyntax]]._ will add validate
+  *  and validateWith methods to a class if a validator for that class is implicitly defined.
   *
   *  Analogous classes for Java can be found in the [[com.github.vickumar1981.svalidate.util]] package
   *
@@ -116,7 +116,7 @@ package object svalidate {
     * a [[ValidationFailure]][T]
     *
     * {{{
-    *   val validationSuccess = Validation.success
+    *   val validationSuccess = Validation.success[Int]
     *   val validationFailure = Validation.fail("The validation failed.")
     * }}}
     */
@@ -188,6 +188,8 @@ package object svalidate {
     *
     * {{{
     *   object TestValidation {
+    *     case class Address(street: String, city: String, state: String, zipCode: String)
+    *
     *     implicit object AddressValidator extends Validatable[Address] {
     *       override def validate(value: Address): Validation = {
     *         (value.street.nonEmpty orElse "Street addr. is required") ++
@@ -207,6 +209,20 @@ package object svalidate {
     * A [[ValidatableWith]][A][B] extends [[ValidatableWithResult]][A][B][String] and using it defaults
     * the DSL to use a String return type.  This can be changed by implementing [[ValidatableWithResult]][A][B]
     * directly where B is return type instead.
+    *
+    * {{{
+    *   object TestValidation {
+    *     case class Contacts(facebook: Option[List[String]] = None, twitter: Option[List[String]] = None)
+    *     case class ContactSettings(hasFacebookContacts: Option[Boolean] = Some(true),
+    *                              hasTwitterContacts: Option[Boolean] = Some(true))
+    *
+    *     implicit object ContactInfoValidator extends ValidatableWith[Contacts, ContactSettings] {
+    *       override def validateWith(value: Contacts, contactSettings: ContactSettings): Validation =
+    *         Validation.success
+    *     }
+    *   }
+    * }}}
+    *
     * @tparam A the class to validate
     */
   trait ValidatableWith[-A, B] extends ValidatableWithResult[A, B, String]
@@ -214,6 +230,27 @@ package object svalidate {
   /**
     * Importing [[ValidationSyntax]] extends validate and validateWith methods to a class A if an implicit
     * [[ValidatableResult]][A][_] or [[ValidatableWithResult]][A][_][_] is defined for that class.
+    *
+    * Import this object alongside the validator to add methods to a class
+    *
+    * {{{
+    * import test.example.Address
+    *
+    * object TestValidation {
+    *   import test.example.ModelValidations.AddressValidator
+    *   import com.github.vickumar1981.svalidate.ValidationSyntax._
+    *
+    *   def main(args: Array[String]): Unit = {
+    *     val addr = Address("", "", "", "")
+    *     val errors = addr.validate()
+    *     // Calls AddressValidator.validate()
+    *     // Depending on the validator, a class can have
+    *     // .validate(), .validate(b: B), or both functions extended to it
+    *   }
+    * }
+    * }}}
+    *
+    * Because this object contains implicits, it is suggested to limit the scope of the import.
     */
   object ValidationSyntax {
 
@@ -225,9 +262,21 @@ package object svalidate {
       * @tparam B the return type of the [[ValidationResult]]
       */
     implicit class ValidatableOps[+A, B](value: A)(implicit v: ValidatableResult[A, B]) {
+      /**
+        * Calls the validate method from the implicit validator
+        * @return a [[ValidationResult]][B] from calling the validator
+        */
       def validate(): ValidationResult[B] = v.validate(value)
     }
 
+    /**
+      * Adds a validateWith method to any class if an implicit validator is in scope
+      * @param value the input value being validated
+      * @param v the implicit validator that has a validateWith
+      * @tparam A the type of the value
+      * @tparam B the type of the parameter to validateWith
+      * @tparam C the return type of the [[ValidationResult]]
+      */
     implicit class ValidatableWithOps[+A, B, C](value: A)(
       implicit v: ValidatableWithResult[A, B, C]) {
       def validateWith(b: B): ValidationResult[C] = v.validateWith(value, b)
