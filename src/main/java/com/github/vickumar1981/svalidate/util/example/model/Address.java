@@ -19,11 +19,13 @@ public class Address implements Validatable<String> {
 
     @Override
     public Validation<String> validate() {
-        return orElse("Street addr. is required").apply(street != null & !street.isEmpty()).append(
-                orElse("City is required").apply(city != null && !city.isEmpty())).append(
-                orElse("Zip code must be 5 digits").apply(
-                        zipCode!= null && zipCode.matches("\\d{5}"))).append(
-                orElse("State abbr must be 2 letters").apply(
-                        state != null && state.matches("[A-Z]{2}")));
+        return Validation.of(
+            orElse("Street addr. is required").apply(street != null & !street.isEmpty()),
+            orElse("City is required").apply(city != null && !city.isEmpty()),
+            orElse("Zip code must be 5 digits").apply(
+                    zipCode!= null && zipCode.matches("\\d{5}")),
+            orElse("State abbr must be 2 letters").apply(
+                    state != null && state.matches("[A-Z]{2}"))
+        );
     }
 }

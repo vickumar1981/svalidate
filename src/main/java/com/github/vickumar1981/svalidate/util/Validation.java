@@ -13,6 +13,14 @@ public class Validation<T> {
         this.exceptions = errors;
     }
 
+    public static <T> Validation<T> of(Validation<T> ...validations) {
+        ArrayList<T> errs = new ArrayList<>();
+        for (Validation<T> v: validations) {
+            errs.addAll(v.errors());
+        }
+        return new Validation<>(errs);
+    }
+
     public List<T> errors() {
         return exceptions;
     }
