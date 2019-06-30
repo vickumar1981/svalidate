@@ -29,23 +29,27 @@ public class Person implements Validatable<String> {
     }
 
     private Validation<String> validateContactInfo() {
-        return errorIfEmpty("Address is required").apply(address)
-                .append(errorIfEmpty("Phone # is required").apply(phone))
-                .append(maybeValidate(address))
-                .append(maybeValidate(phone.map(p -> p.matches("\\d{10}")),
-                        orElse("Phone # must be 10 digits")));
+        return Validation.of(
+            errorIfEmpty("Address is required").apply(address),
+            errorIfEmpty("Phone # is required").apply(phone),
+            maybeValidate(address),
+            maybeValidate(phone.map(p -> p.matches("\\d{10}")),
+                    orElse("Phone # must be 10 digits"))
+        );
     }
 
     @Override
     public Validation<String> validate() {
-        return orElse("First name is required").apply(
-                firstName != null && !firstName.isEmpty())
-                .append(orElse("Last name is required").apply(
-                        lastName != null && !lastName.isEmpty()))
-                .andThen(hasContactInfo, this::validateContactInfo)
-                .orElse(hasContactInfo, () ->
-                    errorIfDefined("Address must be empty").apply(address)
+        return Validation.of(
+            orElse("First name is required").apply(
+                    firstName != null && !firstName.isEmpty())    ,
+            orElse("Last name is required").apply(
+                    lastName != null && !lastName.isEmpty())
+        )
+        .andThen(hasContactInfo, this::validateContactInfo)
+        .orElse(hasContactInfo, () ->
+                errorIfDefined("Address must be empty").apply(address)
                         .append(errorIfDefined("Phone # must be empty").apply(phone))
-                );
+        );
     }
 }
