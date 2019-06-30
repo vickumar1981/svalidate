@@ -11,6 +11,8 @@ licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 pomIncludeRepository := { _ => false }
 publishArtifact in Test := false
 crossScalaVersions := Seq("2.11.11", "2.12.7")
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false, includeDependency = false)
+
 
 // Add sonatype repository settings
 publishTo := Some(
@@ -23,12 +25,6 @@ credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
 assemblyJarName := "svalidate_2.12-" + version.value + ".jar"
 test in assembly := {}
-
-artifact in (Compile, assembly) := {
-  val art = (artifact in (Compile, assembly)).value
-  art.withClassifier(Some(version.value))
-}
-addArtifact(artifact in (Compile, assembly), assembly)
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1" % Test
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test
