@@ -28,7 +28,7 @@ __Using sbt:__
 
 In `build.sbt`:
 ```scala
-libraryDependencies += "com.github.vickumar1981" %% "svalidate" % "1.0.0"
+libraryDependencies += "com.github.vickumar1981" %% "svalidate" % "1.0.1"
 ```
 
 __Using gradle:__
@@ -36,7 +36,7 @@ __Using gradle:__
 In `build.gradle`:
 ```groovy
 dependencies {
-    compile 'com.github.vickumar1981:svalidate_2.12:1.0.0'
+    compile 'com.github.vickumar1981:svalidate_2.12:1.0.1'
 }
 ```
 
@@ -47,7 +47,7 @@ In `pom.xml`:
 <dependency>
     <groupId>com.github.vickumar1981</groupId>
     <artifactId>svalidate_2.12</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
