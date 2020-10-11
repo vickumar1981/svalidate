@@ -1,6 +1,6 @@
 ![Logo](logo.png)
 
-# Conributing to sValidate
+# Contributing to sValidate
 
 Thanks for taking the time to contribute!
 
