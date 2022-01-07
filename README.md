@@ -2,7 +2,7 @@
 
 ## sValidate
 
-[![Build Status](https://api.travis-ci.com/vickumar1981/svalidate.svg?branch=master)](https://travis-ci.com/vickumar1981/svalidate/builds) [![Coverage Status](https://coveralls.io/repos/github/vickumar1981/svalidate/badge.svg?branch=master)](https://coveralls.io/github/vickumar1981/svalidate?branch=master) [![Read the Docs](https://img.shields.io/readthedocs/pip.svg)](https://vickumar1981.github.io/svalidate/api/com/github/vickumar1981/svalidate/index.html) [![Maven metadata URI](https://img.shields.io/maven-central/v/com.github.vickumar1981/svalidate_2.12)](https://mvnrepository.com/artifact/com.github.vickumar1981/svalidate) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
+[![Build Status](https://api.travis-ci.com/vickumar1981/svalidate.svg?branch=master)](https://app.travis-ci.com/github/vickumar1981/svalidate/builds) [![Coverage Status](https://coveralls.io/repos/github/vickumar1981/svalidate/badge.svg?branch=master)](https://coveralls.io/github/vickumar1981/svalidate?branch=master) [![Read the Docs](https://img.shields.io/readthedocs/pip.svg)](https://vickumar1981.github.io/svalidate/api/com/github/vickumar1981/svalidate/index.html) [![Maven metadata URI](https://img.shields.io/maven-central/v/com.github.vickumar1981/svalidate_2.12)](https://mvnrepository.com/artifact/com.github.vickumar1981/svalidate) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 A simple and easy validation syntax for Scala and Java classes
 
